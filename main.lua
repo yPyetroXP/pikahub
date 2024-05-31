@@ -478,3 +478,17 @@ local AutoParryButton = BladeBallTab:CreateButton({
         end
     end,
 })
+
+
+-- Função para abrir a interface do script Rayfield
+local function AbrirInterface()
+    Window:Show()
+end
+
+-- Criando um botão fora da Window para abrir a interface do script Rayfield
+local OpenInterfaceButton = Rayfield:CreateButton({
+    Name = "Abrir Interface",
+    Callback = AbrirInterface,
+    Alignment = 1, -- 1 para a direita, 0 para a esquerda
+    Position = UDim2.new(1, -100, 0, 50), -- Posição no canto superior direito da tela
+})
