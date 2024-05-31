@@ -250,10 +250,11 @@ local Button4 = MainTab:CreateButton({
                     local target
                     local minDistance = math.huge
                     local myPosition = players.LocalPlayer.Character.HumanoidRootPart.Position -- Posição do jogador local
+                    local myTeamColor = players.LocalPlayer.TeamColor -- Cor do jogador local
                     for _, player in pairs(players:GetPlayers()) do
                         if player ~= players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
-                            -- Verifica se o jogador é de uma equipe diferente
-                            if player.Team ~= players.LocalPlayer.Team then
+                            -- Verifica se o jogador tem uma cor diferente
+                            if player.TeamColor ~= myTeamColor then
                                 local headPosition = player.Character.Head.Position
                                 local distance = (headPosition - myPosition).magnitude
                                 if distance < minDistance then
@@ -269,6 +270,10 @@ local Button4 = MainTab:CreateButton({
                     end
                 end
             end)
+        end
+    end,
+})
+
         end
     end,
 })
