@@ -175,64 +175,60 @@ local Button2 = VisualTab:CreateButton({
    end,
 })
 
-local ESP = {}
-
-local function createESP(player)
-    local Billboard = Instance.new("BillboardGui")
-    Billboard.Name = "ESP"
-    Billboard.AlwaysOnTop = true
-    Billboard.Size = UDim2.new(4, 0, 5, 0)
-    Billboard.StudsOffset = Vector3.new(0, 3, 0)
-    Billboard.Adornee = player.Character.Head
-
-    local Frame = Instance.new("Frame")
-    Frame.BackgroundTransparency = 0.5
-    Frame.Size = UDim2.new(1, 0, 1, 0)
-    Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    Frame.BorderSizePixel = 0
-    Frame.Parent = Billboard
-
-    Billboard.Parent = game.CoreGui
-    ESP[player] = Billboard
-end
-
-local function removeESP(player)
-    local billboard = ESP[player]
-    if billboard then
-        billboard:Destroy()
-        ESP[player] = nil
-    end
-end
-
-local function toggleESP()
-    _G.espEnabled = not _G.espEnabled
-
-    if _G.espEnabled then
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer and player.Character then
-                createESP(player)
-            end
-        end
-        game.Players.PlayerAdded:Connect(function(player)
-            player.CharacterAdded:Connect(function()
-                if _G.espEnabled then
-                    createESP(player)
-                end
-            end)
-        end)
-        game.Players.PlayerRemoving:Connect(function(player)
-            removeESP(player)
-        end)
-    else
-        for player, _ in pairs(ESP) do
-            removeESP(player)
-        end
-    end
-end
-
 local Button3 = VisualTab:CreateButton({
     Name = "Ativar/Desativar ESP",
-    Callback = toggleESP,
+    Callback = function()
+        _G.espEnabled = not _G.espEnabled
+
+        if _G.espStarted == nil then
+            _G.espStarted = true
+
+            local function createESP(player)
+                local Billboard = Instance.new("BillboardGui")
+                Billboard.Name = "ESP"
+                Billboard.AlwaysOnTop = true
+                Billboard.Size = UDim2.new(4, 0, 5, 0)
+                Billboard.StudsOffset = Vector3.new(0, 3, 0)
+                Billboard.Adornee = player.Character.Head
+
+                local Frame = Instance.new("Frame")
+                Frame.BackgroundTransparency = 0.5
+                Frame.Size = UDim2.new(1, 0, 1, 0)
+                Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                Frame.BorderSizePixel = 0
+                Frame.Parent = Billboard
+
+                Billboard.Parent = game.CoreGui
+            end
+
+            local function removeESP(player)
+                local billboard = player.Character:FindFirstChild("ESP")
+                if billboard then
+                    billboard:Destroy()
+                end
+            end
+
+            game:GetService('Players').PlayerAdded:Connect(function(player)
+                player.CharacterAdded:Connect(function()
+                    if _G.espEnabled then
+                        createESP(player)
+                    end
+                end)
+            end)
+
+            game:GetService('Players').PlayerRemoving:Connect(function(player)
+                removeESP(player)
+            end)
+
+            for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    if _G.espEnabled then
+                        createESP(player)
+                    end
+                end
+            end
+        end
+    end,
 })
 
 
