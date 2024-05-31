@@ -32,10 +32,10 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("🏠 Início", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("Principal")
 
-local VisualTab - Window:CreateTab("👀 Visual", nil) -- Title, Image
+local VisualTab = Window:CreateTab("👀 Visual", nil) -- Title, Image
 local VisualSelection = VisualTab:CreateSection("Funções Visuais")
 
-local CombatTab - Window:CreateTab("⚔️ Combate", nil) -- Title, Image
+local CombatTab = Window:CreateTab("⚔️ Combate", nil) -- Title, Image
 local CombatSelection = CombatTab:CreateSection("Funções de Combate")
 
 Rayfield:Notify({
