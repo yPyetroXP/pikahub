@@ -49,23 +49,23 @@ Rayfield:Notify({
 local Button = MainTab:CreateButton({
    Name = "Ativar/Desativar Pulo Infinito",
    Callback = function()
-       --Toggles the infinite jump between on or off on every script run
+       -- Alterna o estado do pulo infinito
        _G.infinjump = not _G.infinjump
 
        if _G.infinJumpStarted == nil then
-           --Ensures this only runs once to save resources
+           -- Garante que esta lógica seja executada apenas uma vez para economizar recursos
            _G.infinJumpStarted = true
-           
-           --Notifies readiness
-           game.StarterGui:SetCore("SendNotification", {Title="Pika Hub"; Text="Pulo Infinito ATIVADO!"; Duration=5;})
 
-           --The actual infinite jump
+           -- Notifica a prontidão
+           game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Pulo Infinito ATIVADO!", Duration=5})
+
+           -- A lógica do pulo infinito
            local plr = game:GetService('Players').LocalPlayer
            local m = plr:GetMouse()
-           m.KeyDown:connect(function(k)
-               if _G.infinjump then
-                   if k:byte() == 32 then
-                       local humanoid = plr.Character:FindFirstChildOfClass('Humanoid')
+           m.KeyDown:Connect(function(k)
+               if _G.infinjump and k:byte() == 32 then -- 32 é o código ASCII para a barra de espaço
+                   local humanoid = plr.Character and plr.Character:FindFirstChildOfClass('Humanoid')
+                   if humanoid then
                        humanoid:ChangeState('Jumping')
                        wait()
                        humanoid:ChangeState('Seated')
@@ -84,7 +84,12 @@ local Slider1 = MainTab:CreateSlider({
    CurrentValue = 16,
    Flag = "sliderws", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+       local player = game.Players.LocalPlayer
+       local character = player and player.Character
+       local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+       if humanoid then
+           humanoid.WalkSpeed = Value
+       end
    end,
 })
 
@@ -96,7 +101,12 @@ local Slider2 = MainTab:CreateSlider({
    CurrentValue = 50,
    Flag = "sliderjp", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-       game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+       local player = game.Players.LocalPlayer
+       local character = player and player.Character
+       local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+       if humanoid then
+           humanoid.JumpPower = Value
+       end
    end,
 })
 
@@ -118,7 +128,12 @@ local Input = MainTab:CreateInput({
    Callback = function(Text)
        local speed = tonumber(Text)
        if speed then
-           game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = speed
+           local player = game.Players.LocalPlayer
+           local character = player and player.Character
+           local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+           if humanoid then
+               humanoid.WalkSpeed = speed
+           end
        else
            print("Por favor, insira um número válido.")
        end
