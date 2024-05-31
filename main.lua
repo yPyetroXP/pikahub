@@ -111,6 +111,22 @@ local Slider2 = MainTab:CreateSlider({
    end,
 })
 
+local Slider3 = MainTab:CreateSlider({
+   Name = "Tamanho do Personagem",
+   Range = {0.5, 5},
+   Increment = 0.1,
+   Suffix = "Tamanho",
+   CurrentValue = 1,
+   Flag = "sliderSize", 
+   Callback = function(Value)
+       local player = game.Players.LocalPlayer
+       local character = player and player.Character
+       if character then
+           character:FindFirstChildOfClass("Humanoid").BodyScale.Value = Value
+       end
+   end,
+})
+
 local Dropdown = MainTab:CreateDropdown({
    Name = "Selecionar Área",
    Options = {"Mundo Inicial", "Ilha dos Piratas", "Paraíso dos Abacaxis"},
@@ -118,8 +134,96 @@ local Dropdown = MainTab:CreateDropdown({
    MultipleOptions = false,
    Flag = "dropdownarea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Option)
-       print(Option)
+       local player = game.Players.LocalPlayer
+       local character = player and player.Character
+       if character then
+           if Option == "Mundo Inicial" then
+               character:SetPrimaryPartCFrame(CFrame.new(0, 100, 0))
+           elseif Option == "Ilha dos Piratas" then
+               character:SetPrimaryPartCFrame(CFrame.new(1000, 100, 0))
+           elseif Option == "Paraíso dos Abacaxis" then
+               character:SetPrimaryPartCFrame(CFrame.new(-1000, 100, 0))
+           end
+       end
    end,
+})
+
+local Button2 = MainTab:CreateButton({
+   Name = "Ativar/Desativar Visibilidade Infinita",
+   Callback = function()
+       _G.infinvis = not _G.infinvis
+
+       if _G.infinVisStarted == nil then
+           _G.infinVisStarted = true
+           game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Visibilidade Infinita ATIVADA!", Duration=5})
+
+           local player = game:GetService('Players').LocalPlayer
+           local character = player.Character
+           while _G.infinvis do
+               if character and character:FindFirstChildOfClass('Humanoid') then
+                   character:FindFirstChildOfClass('Humanoid').Health = 100
+               end
+               wait(1)
+           end
+       end
+   end,
+})
+
+local Button3 = MainTab:CreateButton({
+    Name = "Ativar/Desativar ESP",
+    Callback = function()
+        _G.espEnabled = not _G.espEnabled
+
+        if _G.espStarted == nil then
+            _G.espStarted = true
+
+            local function createESP(player)
+                local Box = Instance.new("BoxHandleAdornment")
+                Box.Name = "ESP"
+                Box.Size = Vector3.new(4, 5, 1)
+                Box.Color3 = Color3.fromRGB(255, 0, 0)
+                Box.Transparency = 0.8
+                Box.AlwaysOnTop = true
+                Box.ZIndex = 10
+                Box.Adornee = player.Character
+                Box.Parent = player.Character
+            end
+
+            local function removeESP(player)
+                if player.Character:FindFirstChild("ESP") then
+                    player.Character:FindFirstChild("ESP"):Destroy()
+                end
+            end
+
+            game:GetService('Players').PlayerAdded:Connect(function(player)
+                player.CharacterAdded:Connect(function()
+                    if _G.espEnabled then
+                        createESP(player)
+                    end
+                end)
+            end)
+
+            for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    if _G.espEnabled then
+                        createESP(player)
+                    else
+                        removeESP(player)
+                    end
+                end
+            end
+        else
+            for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+                if player ~= game.Players.LocalPlayer and player.Character then
+                    if _G.espEnabled then
+                        createESP(player)
+                    else
+                        removeESP(player)
+                    end
+                end
+            end
+        end
+    end,
 })
 
 local Input = MainTab:CreateInput({
