@@ -245,14 +245,19 @@ local Button4 = MainTab:CreateButton({
             local camera = game.Workspace.CurrentCamera
             local players = game:GetService('Players')
 
+            local myPlayer = players.LocalPlayer -- Armazena o jogador local
+            if not myPlayer then
+                return -- Sai da função se o jogador local não estiver disponível
+            end
+
             game:GetService('RunService').RenderStepped:Connect(function()
                 if _G.aimbotEnabled then
                     local target
                     local minDistance = math.huge
-                    local myPosition = players.LocalPlayer.Character.HumanoidRootPart.Position -- Posição do jogador local
-                    local myTeamColor = players.LocalPlayer.TeamColor -- Cor do jogador local
+                    local myPosition = myPlayer.Character.HumanoidRootPart.Position -- Posição do jogador local
+                    local myTeamColor = myPlayer.TeamColor -- Cor do jogador local
                     for _, player in pairs(players:GetPlayers()) do
-                        if player ~= players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
                             -- Verifica se o jogador tem uma cor diferente
                             if player.TeamColor ~= myTeamColor then
                                 local headPosition = player.Character.Head.Position
@@ -274,8 +279,5 @@ local Button4 = MainTab:CreateButton({
     end,
 })
 
-        end
-    end,
-})
 
 
