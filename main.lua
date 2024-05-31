@@ -248,20 +248,17 @@ local Button4 = MainTab:CreateButton({
             game:GetService('RunService').RenderStepped:Connect(function()
                 if _G.aimbotEnabled then
                     local target
-                    local maxDistance = math.huge
-                    local myTeam = players.LocalPlayer.Team -- Obtém a equipe do jogador local
+                    local minDistance = math.huge
+                    local myPosition = players.LocalPlayer.Character.HumanoidRootPart.Position -- Posição do jogador local
                     for _, player in pairs(players:GetPlayers()) do
                         if player ~= players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
                             -- Verifica se o jogador é de uma equipe diferente
-                            if player.Team ~= myTeam then
+                            if player.Team ~= players.LocalPlayer.Team then
                                 local headPosition = player.Character.Head.Position
-                                local screenPosition, onScreen = camera:WorldToViewportPoint(headPosition)
-                                if onScreen then
-                                    local distance = (Vector2.new(screenPosition.X, screenPosition.Y) - Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)).magnitude
-                                    if distance < maxDistance then
-                                        maxDistance = distance
-                                        target = player.Character.Head
-                                    end
+                                local distance = (headPosition - myPosition).magnitude
+                                if distance < minDistance then
+                                    minDistance = distance
+                                    target = player.Character.Head
                                 end
                             end
                         end
@@ -275,4 +272,5 @@ local Button4 = MainTab:CreateButton({
         end
     end,
 })
+
 
