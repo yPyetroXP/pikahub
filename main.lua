@@ -32,6 +32,12 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("🏠 Início", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("Principal")
 
+local VisualTab - Window:CreateTab("👀 Visual", nil) -- Title, Image
+local VisualSelection = VisualTab:CreateSection("Funções Visuais")
+
+local CombatTab - Window:CreateTab("⚔️ Combate", nil) -- Title, Image
+local CombatSelection = CombatTab:CreateSection("Funções de Combate")
+
 Rayfield:Notify({
    Title = "Bem-vindo!",
    Content = "Obrigado por usar meu script!",
@@ -148,7 +154,7 @@ local Dropdown = MainTab:CreateDropdown({
    end,
 })
 
-local Button2 = MainTab:CreateButton({
+local Button2 = VisualTab:CreateButton({
    Name = "Ativar/Desativar Visibilidade Infinita",
    Callback = function()
        _G.infinvis = not _G.infinvis
@@ -169,60 +175,64 @@ local Button2 = MainTab:CreateButton({
    end,
 })
 
-local Button3 = MainTab:CreateButton({
-    Name = "Ativar/Desativar ESP",
-    Callback = function()
-        _G.espEnabled = not _G.espEnabled
+local ESP = {}
 
-        if _G.espStarted == nil then
-            _G.espStarted = true
+local function createESP(player)
+    local Billboard = Instance.new("BillboardGui")
+    Billboard.Name = "ESP"
+    Billboard.AlwaysOnTop = true
+    Billboard.Size = UDim2.new(4, 0, 5, 0)
+    Billboard.StudsOffset = Vector3.new(0, 3, 0)
+    Billboard.Adornee = player.Character.Head
 
-            local function createESP(player)
-                local Billboard = Instance.new("BillboardGui")
-                Billboard.Name = "ESP"
-                Billboard.AlwaysOnTop = true
-                Billboard.Size = UDim2.new(4, 0, 5, 0)
-                Billboard.StudsOffset = Vector3.new(0, 3, 0)
-                Billboard.Adornee = player.Character.Head
+    local Frame = Instance.new("Frame")
+    Frame.BackgroundTransparency = 0.5
+    Frame.Size = UDim2.new(1, 0, 1, 0)
+    Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    Frame.BorderSizePixel = 0
+    Frame.Parent = Billboard
 
-                local Frame = Instance.new("Frame")
-                Frame.BackgroundTransparency = 0.5
-                Frame.Size = UDim2.new(1, 0, 1, 0)
-                Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-                Frame.BorderSizePixel = 0
-                Frame.Parent = Billboard
+    Billboard.Parent = game.CoreGui
+    ESP[player] = Billboard
+end
 
-                Billboard.Parent = game.CoreGui
-            end
+local function removeESP(player)
+    local billboard = ESP[player]
+    if billboard then
+        billboard:Destroy()
+        ESP[player] = nil
+    end
+end
 
-            local function removeESP(player)
-                local billboard = player.Character:FindFirstChild("ESP")
-                if billboard then
-                    billboard:Destroy()
-                end
-            end
+local function toggleESP()
+    _G.espEnabled = not _G.espEnabled
 
-            game:GetService('Players').PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function()
-                    if _G.espEnabled then
-                        createESP(player)
-                    end
-                end)
-            end)
-
-            game:GetService('Players').PlayerRemoving:Connect(function(player)
-                removeESP(player)
-            end)
-
-            for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    if _G.espEnabled then
-                        createESP(player)
-                    end
-                end
+    if _G.espEnabled then
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                createESP(player)
             end
         end
-    end,
+        game.Players.PlayerAdded:Connect(function(player)
+            player.CharacterAdded:Connect(function()
+                if _G.espEnabled then
+                    createESP(player)
+                end
+            end)
+        end)
+        game.Players.PlayerRemoving:Connect(function(player)
+            removeESP(player)
+        end)
+    else
+        for player, _ in pairs(ESP) do
+            removeESP(player)
+        end
+    end
+end
+
+local Button3 = VisualTab:CreateButton({
+    Name = "Ativar/Desativar ESP",
+    Callback = toggleESP,
 })
 
 
@@ -245,7 +255,7 @@ local Input = MainTab:CreateInput({
    end,
 })
 
-local Button4 = MainTab:CreateButton({
+local Button4 = CombatTab:CreateButton({
     Name = "Ativar/Desativar Aimbot",
     Callback = function()
         _G.aimbotEnabled = not _G.aimbotEnabled
@@ -302,31 +312,3 @@ local Button4 = MainTab:CreateButton({
         end
     end,
 })
-
-local function FireFreeShot()
-    local myPlayer = game:GetService('Players').LocalPlayer
-    local camera = game.Workspace.CurrentCamera
-
-    local closestEnemy
-    local minDistance = math.huge
-
-    for _, player in pairs(game:GetService('Players'):GetPlayers()) do
-        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local head = player.Character.Head
-            local distance = (head.Position - camera.CFrame.Position).magnitude
-            if distance < minDistance then
-                closestEnemy = head
-                minDistance = distance
-            end
-        end
-    end
-
-    if closestEnemy then
-        -- Disparar
-        -- Substitua essa parte com sua lógica de disparo real
-        print("Disparando em " .. closestEnemy.Parent.Name)
-    else
-        print("Nenhum inimigo encontrado.")
-    end
-end
-
