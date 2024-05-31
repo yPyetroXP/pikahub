@@ -182,8 +182,8 @@ local Button3 = MainTab:CreateButton({
                     local Billboard = Instance.new("BillboardGui")
                     Billboard.Name = "ESP"
                     Billboard.AlwaysOnTop = true
-                    Billboard.Size = UDim2.new(4, 0, 5, 0)
-                    Billboard.StudsOffset = Vector3.new(0, 3, 0)
+                    Billboard.Size = UDim2.new(0, 100, 0, 20) -- Tamanho do ESP
+                    Billboard.StudsOffset = Vector3.new(0, 2, 0) -- Posição relativa ao centro do personagem
                     Billboard.Adornee = player.Character.Head
 
                     local Frame = Instance.new("Frame")
@@ -226,6 +226,7 @@ local Button3 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
 
