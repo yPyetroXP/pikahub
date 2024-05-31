@@ -268,8 +268,8 @@ local Button4 = MainTab:CreateButton({
 
             game:GetService('RunService').RenderStepped:Connect(function()
                 if _G.aimbotEnabled then
+                    local minDistance = math.huge
                     local target
-                    local maxDotProduct = -math.huge
                     local myPlayer = players.LocalPlayer
                     local myCharacter = myPlayer.Character
                     local myHead = myCharacter and myCharacter:FindFirstChild("Head")
@@ -279,17 +279,10 @@ local Button4 = MainTab:CreateButton({
                         if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
                             local head = player.Character.Head
                             local headPosition = head.Position
-                            local directionToHead = (headPosition - myPosition).unit
-                            local cameraDirection = (headPosition - camera.CFrame.Position).unit
-                            local dotProduct = directionToHead:Dot(cameraDirection)
-                            if dotProduct > maxDotProduct then
-                                -- Verifica se há obstrução entre o jogador local e o jogador inimigo
-                                local ray = Ray.new(camera.CFrame.Position, headPosition - camera.CFrame.Position)
-                                local part, position = workspace:FindPartOnRay(ray, myCharacter, false, true)
-                                if part and part:IsDescendantOf(player.Character) then
-                                    maxDotProduct = dotProduct
-                                    target = head
-                                end
+                            local distance = (headPosition - myPosition).magnitude
+                            if distance < minDistance then
+                                minDistance = distance
+                                target = head
                             end
                         end
                     end
@@ -303,102 +296,4 @@ local Button4 = MainTab:CreateButton({
     end,
 })
 
-local function FireFreeShot()
-    local myPlayer = game:GetService('Players').LocalPlayer
-    local camera = game.Workspace.CurrentCamera
 
-    local closestEnemy
-    local minDistance = math.huge
-
-    for _, player in pairs(game:GetService('Players'):GetPlayers()) do
-        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local head = player.Character.Head
-            local distance = (head.Position - camera.CFrame.Position).magnitude
-            if distance < minDistance then
-                closestEnemy = head
-                minDistance = distance
-            end
-        end
-    end
-
-    if closestEnemy then
-        -- Disparar
-        -- Substitua essa parte com sua lógica de disparo real
-        print("Disparando em " .. closestEnemy.Parent.Name)
-    else
-        print("Nenhum inimigo encontrado.")
-    end
-end
-
--- Função para ativar/desativar o "Tiro Livre"
-local Button6 = MainTab:CreateButton({
-    Name = "Ativar/Desativar Tiro Livre",
-    Callback = function()
-        _G.freeShotEnabled = not _G.freeShotEnabled
-
-        if _G.freeShotEnabled then
-            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Tiro Livre ATIVADO!", Duration=5})
-        else
-            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Tiro Livre DESATIVADO!", Duration=5})
-        end
-    end,
-})
-
--- Tiro Livre Loop
-game:GetService('RunService').Stepped:Connect(function()
-    if _G.freeShotEnabled then
-        FireFreeShot()
-    end
-end)
-
-
-
-local function IsEnemy(player)
-    local myPlayer = game:GetService('Players').LocalPlayer
-    if player.Team ~= myPlayer.Team then
-        return true -- Se os jogadores estiverem em equipes diferentes, consideramos este jogador um inimigo
-    end
-    return false
-end
-
--- Agora, vamos integrar a função IsEnemy no código do triggerbot:
-
--- Triggerbot Loop
-game:GetService('RunService').RenderStepped:Connect(function()
-    if _G.triggerbotEnabled then
-        local camera = game.Workspace.CurrentCamera
-        local myPlayer = game:GetService('Players').LocalPlayer
-
-        for _, player in pairs(game:GetService('Players'):GetPlayers()) do
-            if player ~= myPlayer and IsEnemy(player) then
-                local head = player.Character and player.Character:FindFirstChild("Head")
-                if head then
-                    local direction = (head.Position - camera.CFrame.Position).unit
-                    local ray = Ray.new(camera.CFrame.Position, direction * 300)
-                    local part, position = workspace:FindPartOnRay(ray, myPlayer.Character, false, true)
-                    if part and part:IsDescendantOf(player.Character) then
-                        -- Disparar
-                        -- Substitua essa parte com sua lógica de disparo real
-                        print("Disparando no jogador: " .. player.Name)
-                    end
-                end
-            end
-        end
-    end
-end)
-
-
-
--- Função para ativar/desativar o triggerbot
-local Button5 = MainTab:CreateButton({
-    Name = "Ativar/Desativar Triggerbot",
-    Callback = function()
-        _G.triggerbotEnabled = not _G.triggerbotEnabled
-
-        if _G.triggerbotEnabled then
-            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Triggerbot ATIVADO!", Duration=5})
-        else
-            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Triggerbot DESATIVADO!", Duration=5})
-        end
-    end,
-})
