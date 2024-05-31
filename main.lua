@@ -32,12 +32,6 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("🏠 Início", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("Principal")
 
-local VisualTab = Window:CreateTab("👀 Visual", nil) -- Title, Image
-local VisualSelection = VisualTab:CreateSection("Funções Visuais")
-
-local CombatTab = Window:CreateTab("⚔️ Combate", nil) -- Title, Image
-local CombatSelection = CombatTab:CreateSection("Funções de Combate")
-
 Rayfield:Notify({
    Title = "Bem-vindo!",
    Content = "Obrigado por usar meu script!",
@@ -154,7 +148,7 @@ local Dropdown = MainTab:CreateDropdown({
    end,
 })
 
-local Button2 = VisualTab:CreateButton({
+local Button2 = MainTab:CreateButton({
    Name = "Ativar/Desativar Visibilidade Infinita",
    Callback = function()
        _G.infinvis = not _G.infinvis
@@ -175,7 +169,7 @@ local Button2 = VisualTab:CreateButton({
    end,
 })
 
-local Button3 = VisualTab:CreateButton({
+local Button3 = MainTab:CreateButton({
     Name = "Ativar/Desativar ESP",
     Callback = function()
         _G.espEnabled = not _G.espEnabled
@@ -251,7 +245,7 @@ local Input = MainTab:CreateInput({
    end,
 })
 
-local Button4 = CombatTab:CreateButton({
+local Button4 = MainTab:CreateButton({
     Name = "Ativar/Desativar Aimbot",
     Callback = function()
         _G.aimbotEnabled = not _G.aimbotEnabled
