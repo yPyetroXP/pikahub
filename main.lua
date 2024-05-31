@@ -106,7 +106,7 @@ local Slider2 = MainTab:CreateSlider({
        local character = player and player.Character
        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
        if humanoid then
-           humanoid.JumpPower = Value
+           humanoid.JumpHeight = Value
        end
    end,
 })
