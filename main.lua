@@ -303,6 +303,55 @@ local Button4 = MainTab:CreateButton({
     end,
 })
 
+local function FireFreeShot()
+    local myPlayer = game:GetService('Players').LocalPlayer
+    local camera = game.Workspace.CurrentCamera
+
+    local closestEnemy
+    local minDistance = math.huge
+
+    for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
+            local head = player.Character.Head
+            local distance = (head.Position - camera.CFrame.Position).magnitude
+            if distance < minDistance then
+                closestEnemy = head
+                minDistance = distance
+            end
+        end
+    end
+
+    if closestEnemy then
+        -- Disparar
+        -- Substitua essa parte com sua lógica de disparo real
+        print("Disparando em " .. closestEnemy.Parent.Name)
+    else
+        print("Nenhum inimigo encontrado.")
+    end
+end
+
+-- Função para ativar/desativar o "Tiro Livre"
+local Button6 = MainTab:CreateButton({
+    Name = "Ativar/Desativar Tiro Livre",
+    Callback = function()
+        _G.freeShotEnabled = not _G.freeShotEnabled
+
+        if _G.freeShotEnabled then
+            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Tiro Livre ATIVADO!", Duration=5})
+        else
+            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Tiro Livre DESATIVADO!", Duration=5})
+        end
+    end,
+})
+
+-- Tiro Livre Loop
+game:GetService('RunService').Stepped:Connect(function()
+    if _G.freeShotEnabled then
+        FireFreeShot()
+    end
+end)
+
+
 
 
 
