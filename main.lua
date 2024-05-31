@@ -404,3 +404,77 @@ local Button5 = MainTab:CreateButton({
 })
 
 
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local ReplicatedPaw = game:GetService("ReplicatedStorage")
+
+local Paws = ReplicatedPaw:WaitForChild("Remotes", 9e9)
+local PawsBalls = workspace:WaitForChild("Balls", 9e9)
+local PawsTable = getgenv().Paws
+
+-- Função para verificar se o jogador está visando a bola
+local function IsTheTarget()
+    return Player.Character:FindFirstChild("Highlight")
+end
+
+-- Função para encontrar a bola real
+local function FindBall()
+    local RealBall
+    for i, v in pairs(PawsBalls:GetChildren()) do
+        if v:GetAttribute("realBall") == true then
+            RealBall = v
+        end
+    end
+    return RealBall
+end
+
+-- Loop para verificar continuamente a proximidade da bola e realizar a ação de rebatida se o AutoParry estiver habilitado
+game:GetService("RunService").Stepped:Connect(function()
+    if _G.autoParryEnabled then
+        if not FindBall() then 
+            return
+        end
+        
+        local Ball = FindBall()
+        
+        local BallPosition = Ball.Position
+        
+        local BallVelocity = Ball.AssemblyLinearVelocity.Magnitude
+        
+        local Distance = Player:DistanceFromCharacter(BallPosition)
+        
+        local Ping = BallVelocity * (game.Stats.Network.ServerStatsItem["Data Ping"]:GetValue() / 1000)
+        
+        if PawsTable.PingBased then
+            Distance -= Ping + PawsTable.PingBasedOffset
+        end
+        
+        if PawsTable.BallSpeedCheck and BallVelocity == 0 then
+            return
+        end
+        
+        if (Distance / BallVelocity) <= PawsTable.DistanceToParry and IsTheTarget() and PawsTable.AutoParry then
+            Paws:WaitForChild("ParryButtonPress"):Fire()
+        end
+    end
+end)
+
+-- Criando uma nova aba para o jogo "Blade Ball"
+local BladeBallTab = Window:CreateTab("⚔️ Blade Ball", nil) -- Title, Image
+
+-- Seção para funcionalidades relacionadas ao AutoParry
+local AutoParrySection = BladeBallTab:CreateSection("AutoParry")
+
+-- Botão para ativar/desativar o AutoParry
+local AutoParryButton = BladeBallTab:CreateButton({
+    Name = "Ativar/Desativar AutoParry",
+    Callback = function()
+        _G.autoParryEnabled = not _G.autoParryEnabled
+
+        if _G.autoParryEnabled then
+            game.StarterGui:SetCore("SendNotification", {Title = "Pika Hub", Text = "AutoParry ATIVADO!", Duration = 5})
+        else
+            game.StarterGui:SetCore("SendNotification", {Title = "Pika Hub", Text = "AutoParry DESATIVADO!", Duration = 5})
+        end
+    end,
+})
