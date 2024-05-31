@@ -1,6 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local NomeJogo = game.Name
+-- Obtendo o nome do jogo usando o serviço MarketplaceService
+local NomeJogo = game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name
 
 local Window = Rayfield:CreateWindow({
    Name = "🔥 Pika Hub | Jogo: " .. NomeJogo,
