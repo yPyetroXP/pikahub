@@ -265,28 +265,31 @@ local Button4 = MainTab:CreateButton({
 
             local camera = game.Workspace.CurrentCamera
             local players = game:GetService('Players')
+            local localPlayer = players.LocalPlayer
 
             game:GetService('RunService').RenderStepped:Connect(function()
                 if _G.aimbotEnabled then
-                    local target
                     local maxDotProduct = -math.huge
-                    local myPlayer = players.LocalPlayer
-                    local myCharacter = myPlayer.Character
-                    local myHead = myCharacter and myCharacter:FindFirstChild("Head")
+                    local target
+
+                    local myCharacter = localPlayer.Character
+                    if not myCharacter then return end
+
+                    local myHead = myCharacter:FindFirstChild("Head")
                     if not myHead then return end
+
                     local myPosition = myHead.Position
+
                     for _, player in pairs(players:GetPlayers()) do
-                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
-                            local head = player.Character.Head
-                            local headPosition = head.Position
-                            local directionToHead = (headPosition - myPosition).unit
-                            local cameraDirection = (headPosition - camera.CFrame.Position).unit
-                            local dotProduct = directionToHead:Dot(cameraDirection)
-                            if dotProduct > maxDotProduct then
-                                -- Verifica se há obstrução entre o jogador local e o jogador inimigo
-                                local ray = Ray.new(camera.CFrame.Position, headPosition - camera.CFrame.Position)
-                                local part, position = workspace:FindPartOnRay(ray, myCharacter, false, true)
-                                if part and part:IsDescendantOf(player.Character) then
+                        if player ~= localPlayer and player.Character then
+                            local head = player.Character:FindFirstChild("Head")
+                            if head then
+                                local headPosition = head.Position
+                                local directionToHead = (headPosition - myPosition).unit
+                                local cameraDirection = (headPosition - camera.CFrame.Position).unit
+                                local dotProduct = directionToHead:Dot(cameraDirection)
+
+                                if dotProduct > maxDotProduct then
                                     maxDotProduct = dotProduct
                                     target = head
                                 end
@@ -302,3 +305,4 @@ local Button4 = MainTab:CreateButton({
         end
     end,
 })
+
