@@ -178,20 +178,27 @@ local Button3 = MainTab:CreateButton({
             _G.espStarted = true
 
             local function createESP(player)
-                local Box = Instance.new("BoxHandleAdornment")
-                Box.Name = "ESP"
-                Box.Size = Vector3.new(4, 5, 1)
-                Box.Color3 = Color3.fromRGB(255, 0, 0)
-                Box.Transparency = 0.8
-                Box.AlwaysOnTop = true
-                Box.ZIndex = 10
-                Box.Adornee = player.Character
-                Box.Parent = player.Character
+                local Billboard = Instance.new("BillboardGui")
+                Billboard.Name = "ESP"
+                Billboard.AlwaysOnTop = true
+                Billboard.Size = UDim2.new(4, 0, 5, 0)
+                Billboard.StudsOffset = Vector3.new(0, 3, 0)
+                Billboard.Adornee = player.Character.Head
+
+                local Frame = Instance.new("Frame")
+                Frame.BackgroundTransparency = 0.5
+                Frame.Size = UDim2.new(1, 0, 1, 0)
+                Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                Frame.BorderSizePixel = 0
+                Frame.Parent = Billboard
+
+                Billboard.Parent = game.CoreGui
             end
 
             local function removeESP(player)
-                if player.Character:FindFirstChild("ESP") then
-                    player.Character:FindFirstChild("ESP"):Destroy()
+                local billboard = player.Character:FindFirstChild("ESP")
+                if billboard then
+                    billboard:Destroy()
                 end
             end
 
@@ -203,18 +210,21 @@ local Button3 = MainTab:CreateButton({
                 end)
             end)
 
-            for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+            game:GetService('Players').PlayerRemoving:Connect(function(player)
+                removeESP(player)
+            end)
+
+            for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
                 if player ~= game.Players.LocalPlayer and player.Character then
                     if _G.espEnabled then
                         createESP(player)
-                    else
-                        removeESP(player)
                     end
                 end
             end
         end
     end,
 })
+
 
 local Input = MainTab:CreateInput({
    Name = "Velocidade de Caminhada",
