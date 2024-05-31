@@ -353,6 +353,54 @@ end)
 
 
 
+local function IsEnemy(player)
+    local myPlayer = game:GetService('Players').LocalPlayer
+    if player.Team ~= myPlayer.Team then
+        return true -- Se os jogadores estiverem em equipes diferentes, consideramos este jogador um inimigo
+    end
+    return false
+end
 
+-- Agora, vamos integrar a função IsEnemy no código do triggerbot:
+
+-- Triggerbot Loop
+game:GetService('RunService').RenderStepped:Connect(function()
+    if _G.triggerbotEnabled then
+        local camera = game.Workspace.CurrentCamera
+        local myPlayer = game:GetService('Players').LocalPlayer
+
+        for _, player in pairs(game:GetService('Players'):GetPlayers()) do
+            if player ~= myPlayer and IsEnemy(player) then
+                local head = player.Character and player.Character:FindFirstChild("Head")
+                if head then
+                    local direction = (head.Position - camera.CFrame.Position).unit
+                    local ray = Ray.new(camera.CFrame.Position, direction * 300)
+                    local part, position = workspace:FindPartOnRay(ray, myPlayer.Character, false, true)
+                    if part and part:IsDescendantOf(player.Character) then
+                        -- Disparar
+                        -- Substitua essa parte com sua lógica de disparo real
+                        print("Disparando no jogador: " .. player.Name)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+
+
+-- Função para ativar/desativar o triggerbot
+local Button5 = MainTab:CreateButton({
+    Name = "Ativar/Desativar Triggerbot",
+    Callback = function()
+        _G.triggerbotEnabled = not _G.triggerbotEnabled
+
+        if _G.triggerbotEnabled then
+            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Triggerbot ATIVADO!", Duration=5})
+        else
+            game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Triggerbot DESATIVADO!", Duration=5})
+        end
+    end,
+})
 
 
