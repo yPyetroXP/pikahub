@@ -212,16 +212,6 @@ local Button3 = MainTab:CreateButton({
                     end
                 end
             end
-        else
-            for _, player in pairs(game:GetService('Players'):GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    if _G.espEnabled then
-                        createESP(player)
-                    else
-                        removeESP(player)
-                    end
-                end
-            end
         end
     end,
 })
@@ -243,4 +233,41 @@ local Input = MainTab:CreateInput({
            print("Por favor, insira um número válido.")
        end
    end,
+})
+
+local Button4 = MainTab:CreateButton({
+    Name = "Ativar/Desativar Aimbot",
+    Callback = function()
+        _G.aimbotEnabled = not _G.aimbotEnabled
+
+        if _G.aimbotStarted == nil then
+            _G.aimbotStarted = true
+            local camera = game.Workspace.CurrentCamera
+            local players = game:GetService('Players')
+
+            game:GetService('RunService').RenderStepped:Connect(function()
+                if _G.aimbotEnabled then
+                    local target
+                    local maxDistance = math.huge
+                    for _, player in pairs(players:GetPlayers()) do
+                        if player ~= players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                            local headPosition = player.Character.Head.Position
+                            local screenPosition, onScreen = camera:WorldToViewportPoint(headPosition)
+                            if onScreen then
+                                local distance = (Vector2.new(screenPosition.X, screenPosition.Y) - Vector2.new(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)).magnitude
+                                if distance < maxDistance then
+                                    maxDistance = distance
+                                    target = player.Character.Head
+                                end
+                            end
+                        end
+                    end
+
+                    if target then
+                        camera.CFrame = CFrame.new(camera.CFrame.Position, target.Position)
+                    end
+                end
+            end)
+        end
+    end,
 })
