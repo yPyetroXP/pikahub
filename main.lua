@@ -48,34 +48,27 @@ Rayfield:Notify({
 })
 
 local Button = MainTab:CreateButton({
-   Name = "Ativar/Desativar Pulo Infinito",
-   Callback = function()
-       -- Alterna o estado do pulo infinito
-       _G.infinjump = not _G.infinjump
+    Name = "Infinite Jump",
+    Callback = function()
+        local InfiniteJumpEnabled = true
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            if InfiniteJumpEnabled then
+                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+            end
+        end)
 
-       if _G.infinJumpStarted == nil then
-           -- Garante que esta lógica seja executada apenas uma vez para economizar recursos
-           _G.infinJumpStarted = true
-
-           -- Notifica a prontidão
-           game.StarterGui:SetCore("SendNotification", {Title="Pika Hub", Text="Pulo Infinito ATIVADO!", Duration=5})
-
-           -- A lógica do pulo infinito
-           local plr = game:GetService('Players').LocalPlayer
-           local m = plr:GetMouse()
-           m.KeyDown:Connect(function(k)
-               if _G.infinjump and k:byte() == 32 then -- 32 é o código ASCII para a barra de espaço
-                   local humanoid = plr.Character and plr.Character:FindFirstChildOfClass('Humanoid')
-                   if humanoid then
-                       humanoid:ChangeState('Jumping')
-                       wait()
-                       humanoid:ChangeState('Seated')
-                   end
-               end
-           end)
-       end
-   end,
+        local InfiniteJump = CreateButton("Infinite Jump: On", StuffFrame)
+        InfiniteJump.Position = UDim2.new(0, 10, 0, 130)
+        InfiniteJump.Size = UDim2.new(0, 150, 0, 30)
+        InfiniteJump.MouseButton1Click:Connect(function()
+            local state = InfiniteJump.Text:sub(string.len("Infinite Jump: ") + 1) --too lazy to count lol
+            local new = state == "Off" and "On" or state == "On" and "Off"
+            InfiniteJumpEnabled = new == "On"
+            InfiniteJump.Text = "Infinite Jump: " .. new
+        end)
+    end,
 })
+
 
 local Slider1 = MainTab:CreateSlider({
    Name = "Velocidade de Caminhada",
