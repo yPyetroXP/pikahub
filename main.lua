@@ -278,7 +278,7 @@ local Button4 = MainTab:CreateButton({
 
             local function isEnemy(player)
                 local myPlayer = game.Players.LocalPlayer
-                if game.PlaceId == ARSENAL_PLACE_ID then
+                if game.PlaceId == 286090429 then
                     return player.Team ~= myPlayer.Team -- Se estivermos em Arsenal, verificamos a equipe
                 else
                     return true -- Para outros jogos, o Aimbot funcionará independentemente da equipe
