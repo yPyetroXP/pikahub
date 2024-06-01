@@ -352,7 +352,7 @@ local function NoRecoil()
 
     mouse.Move:Connect(function()
         if _G.noRecoilEnabled then
-            camera.Recoil = Vector3.new(0, 0, 0) -- Define o recuo da câmera como zero para evitar o recuo
+            camera.ViewportFrame.CurrentCameraRecoil = Vector3.new(0, 0, 0) -- Define o recuo da câmera como zero para evitar o recuo
         end
     end)
 end
@@ -367,4 +367,5 @@ local Button6 = CombatTab:CreateButton({
         end
     end,
 })
+
 
