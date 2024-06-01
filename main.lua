@@ -352,7 +352,7 @@ local function NoRecoil()
     end)
 end
 
-local Button6 = MainTab:CreateButton({
+local Button6 = CombatTab:CreateButton({
     Name = "Ativar/Desativar No Recoil",
     Callback = function()
         _G.noRecoilEnabled = not _G.noRecoilEnabled
