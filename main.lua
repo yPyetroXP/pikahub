@@ -481,3 +481,56 @@ local Button9 = CombatTab:CreateButton({
         end
     end,
 })
+
+local function TeleportToNearestPlayer()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    local nearestPlayer = FindNearestPlayer()
+
+    if nearestPlayer and humanoidRootPart then
+        local targetCharacter = nearestPlayer.Character
+        local targetHumanoidRootPart = targetCharacter and targetCharacter:FindFirstChild("HumanoidRootPart")
+        
+        if targetHumanoidRootPart then
+            humanoidRootPart.CFrame = targetHumanoidRootPart.CFrame * CFrame.new(0, 5, 0) -- Teleporta o jogador local para cima do jogador mais próximo
+        end
+    end
+end
+
+local function FindNearestPlayer()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        return
+    end
+
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+
+    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character then
+            local targetCharacter = otherPlayer.Character
+            local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            if targetHumanoidRootPart then
+                local distance = (targetHumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    nearestPlayer = otherPlayer
+                end
+            end
+        end
+    end
+
+    return nearestPlayer
+end
+
+local Button10 = CombatTab:CreateButton({
+    Name = "Teleportar para Jogador Mais Próximo",
+    Callback = function()
+        TeleportToNearestPlayer()
+    end,
+})
+
