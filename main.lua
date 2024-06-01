@@ -141,7 +141,11 @@ local Dropdown = MainTab:CreateDropdown({
    end,
 })
 
-local Button2 = MainTab:CreateButton({
+local VisualTab = Window:CreateTab("👀 Visual", nil) -- Title, Image
+local VisualSection = VisualTab:CreateSection("Funções de Visual")
+
+
+local Button2 = VisualTab:CreateButton({
    Name = "Ativar/Desativar Visibilidade Infinita",
    Callback = function()
        _G.infinvis = not _G.infinvis
@@ -162,7 +166,7 @@ local Button2 = MainTab:CreateButton({
    end,
 })
 
-local Button3 = MainTab:CreateButton({
+local Button3 = VisualTab:CreateButton({
     Name = "Ativar/Desativar ESP",
     Callback = function()
         _G.espEnabled = not _G.espEnabled
@@ -260,7 +264,11 @@ local Input = MainTab:CreateInput({
    end,
 })
 
-local Button4 = MainTab:CreateButton({
+local CombatTab = Window:CreateTab("☄ Combate", nil) -- Title, Image
+local CombatSection = CombatTab:CreateSection("Funções de Combate")
+
+
+local Button4 = CombatTab:CreateButton({
     Name = "Ativar/Desativar Aimbot",
     Callback = function()
         _G.aimbotEnabled = not _G.aimbotEnabled
@@ -311,7 +319,7 @@ local Button4 = MainTab:CreateButton({
 })
 
 
-local Button5 = MainTab:CreateButton({
+local Button5 = CombatTab:CreateButton({
     Name = "Ativar/Desativar Rapid Fire",
     Callback = function()
         _G.rapidFireEnabled = not _G.rapidFireEnabled
