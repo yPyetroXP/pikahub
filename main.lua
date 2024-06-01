@@ -174,39 +174,27 @@ local Button3 = MainTab:CreateButton({
                 if player.Character then
                     local head = player.Character:FindFirstChild("Head")
                     if head then
-                        local Line = Drawing.new("Line")
-                        Line.Thickness = 2 -- Espessura da linha
-                        Line.Color = Color3.fromRGB(0, 255, 0) -- Cor verde para o ESP
-                        Line.Transparency = 1 -- Definido como transparente
-                        Line.Visible = true -- Tornar a linha visível
+                        local Billboard = Instance.new("BillboardGui")
+                        Billboard.Name = "ESP"
+                        Billboard.Size = UDim2.new(2, 0, 2, 0) -- Tamanho do ESP
+                        Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste fino da altura em relação à cabeça do jogador
+                        Billboard.Adornee = head
 
-                        game:GetService("RunService").Stepped:Connect(function()
-                            if _G.espEnabled then
-                                local pos, onScreen = game:GetService("Workspace").CurrentCamera:WorldToViewportPoint(head.Position)
-                                if onScreen then
-                                    local distance = (head.Position - game:GetService("Workspace").CurrentCamera.CFrame.p).Magnitude
-                                    local width = 1500 / (distance)
-                                    Line.From = Vector2.new(game:GetService("Workspace").CurrentCamera.ViewportSize.X / 2, game:GetService("Workspace").CurrentCamera.ViewportSize.Y)
-                                    Line.To = Vector2.new(pos.X, pos.Y)
-                                    Line.Thickness = width -- Atualiza a espessura com base na distância
-                                    Line.Transparency = 0.5 -- Define a transparência para a linha
-                                else
-                                    Line.Transparency = 1 -- Esconde a linha se o jogador não estiver visível na tela
-                                end
-                            else
-                                Line.Transparency = 1 -- Esconde a linha quando o ESP está desativado
-                            end
-                        end)
+                        local Frame = Instance.new("Frame")
+                        Frame.Size = UDim2.new(1, 0, 1, 0)
+                        Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Cor vermelha para o ESP
+                        Frame.BorderSizePixel = 2
+                        Frame.Parent = Billboard
+
+                        Billboard.Parent = game.CoreGui
                     end
                 end
             end
 
             local function removeESP(player)
-                if player.Character then
-                    local line = player.Character:FindFirstChild("ESP_Line")
-                    if line then
-                        line:Remove()
-                    end
+                local billboard = player:FindFirstChild("ESP")
+                if billboard then
+                    billboard:Destroy()
                 end
             end
 
