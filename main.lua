@@ -342,22 +342,17 @@ local Button5 = CombatTab:CreateButton({
 local function NoRecoil()
     local player = game.Players.LocalPlayer
     local mouse = player:GetMouse()
-    local camera = game.Workspace.CurrentCamera
-
-    mouse.Button1Down:Connect(function()
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
-        end
-    end)
-
+    
     mouse.Move:Connect(function()
         if _G.noRecoilEnabled then
-            camera.CameraRecoil = Vector3.new(0, 0, 0) -- Define o recuo da câmera como zero para evitar o recuo
+            local camera = game.Workspace.CurrentCamera
+            local recoil = camera:WaitForChild("Recoil")
+            recoil.Value = Vector3.new(0, 0, 0) -- Define o recuo da câmera como zero para evitar o recuo
         end
     end)
 end
 
-local Button6 = CombatTab:CreateButton({
+local Button6 = MainTab:CreateButton({
     Name = "Ativar/Desativar No Recoil",
     Callback = function()
         _G.noRecoilEnabled = not _G.noRecoilEnabled
@@ -367,6 +362,7 @@ local Button6 = CombatTab:CreateButton({
         end
     end,
 })
+
 
 
 local function SilentAim()
