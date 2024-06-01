@@ -369,5 +369,64 @@ local Button6 = CombatTab:CreateButton({
 })
 
 
+local function SilentAim()
+    local player = game.Players.LocalPlayer
+    local mouse = player:GetMouse()
+    local camera = game.Workspace.CurrentCamera
+    
+    mouse.Button1Down:Connect(function()
+        if _G.silentAimEnabled then
+            local target = FindNearestTarget()
+            if target then
+                local direction = (target.Position - camera.CFrame.Position).unit
+                camera.CFrame = CFrame.new(camera.CFrame.Position, camera.CFrame.Position + direction)
+            end
+        end
+    end)
+end
+
+local Button7 = CombatTab:CreateButton({
+    Name = "Ativar/Desativar Silent Aim",
+    Callback = function()
+        _G.silentAimEnabled = not _G.silentAimEnabled
+
+        if _G.silentAimEnabled then
+            SilentAim()
+        end
+    end,
+})
+
+function FindNearestTarget()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    local camera = game.Workspace.CurrentCamera
+
+    if not humanoidRootPart then
+        return
+    end
+
+    local nearestTarget = nil
+    local shortestDistance = math.huge
+
+    for _, targetPlayer in ipairs(game.Players:GetPlayers()) do
+        if targetPlayer ~= player and targetPlayer.Character then
+            local targetCharacter = targetPlayer.Character
+            local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            if targetHumanoidRootPart then
+                local distance = (targetHumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+                local onScreen, screenPos = camera:WorldToScreenPoint(targetHumanoidRootPart.Position)
+                if onScreen then
+                    if distance < shortestDistance then
+                        shortestDistance = distance
+                        nearestTarget = targetHumanoidRootPart
+                    end
+                end
+            end
+        end
+    end
+
+    return nearestTarget
+end
 
 
