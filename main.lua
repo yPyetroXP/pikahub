@@ -172,28 +172,33 @@ local Button3 = MainTab:CreateButton({
 
             local function createESP(player)
                 if player.Character then
-                    local Billboard = Instance.new("BillboardGui")
-                    Billboard.Name = "ESP"
-                    Billboard.AlwaysOnTop = true
-                    Billboard.Size = UDim2.new(0, 100, 0, 20) -- Tamanho do ESP
-                    Billboard.StudsOffset = Vector3.new(0, 2, 0) -- Ajuste fino da altura em relação à cabeça do jogador
-                    Billboard.Adornee = player.Character.Head
+                    local head = player.Character:FindFirstChild("Head")
+                    if head then
+                        local Billboard = Instance.new("BillboardGui")
+                        Billboard.Name = "ESP"
+                        Billboard.AlwaysOnTop = true
+                        Billboard.Size = UDim2.new(0, 100, 0, 20) -- Tamanho do ESP
+                        Billboard.StudsOffset = Vector3.new(0, 2, 0) -- Ajuste fino da altura em relação à cabeça do jogador
+                        Billboard.Adornee = head
 
-                    local Frame = Instance.new("Frame")
-                    Frame.BackgroundTransparency = 0.5
-                    Frame.Size = UDim2.new(1, 0, 1, 0)
-                    Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-                    Frame.BorderSizePixel = 0
-                    Frame.Parent = Billboard
+                        local Frame = Instance.new("Frame")
+                        Frame.BackgroundTransparency = 0.5
+                        Frame.Size = UDim2.new(1, 0, 1, 0)
+                        Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                        Frame.BorderSizePixel = 0
+                        Frame.Parent = Billboard
 
-                    Billboard.Parent = game.CoreGui
+                        Billboard.Parent = game.CoreGui
+                    end
                 end
             end
 
             local function removeESP(player)
-                local billboard = player.Character and player.Character:FindFirstChild("ESP")
-                if billboard then
-                    billboard:Destroy()
+                if player.Character then
+                    local billboard = player.Character:FindFirstChild("ESP")
+                    if billboard then
+                        billboard:Destroy()
+                    end
                 end
             end
 
@@ -219,6 +224,7 @@ local Button3 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
 
