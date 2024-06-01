@@ -176,16 +176,17 @@ local Button3 = MainTab:CreateButton({
                     if head then
                         local Billboard = Instance.new("BillboardGui")
                         Billboard.Name = "ESP"
-                        Billboard.AlwaysOnTop = true
-                        Billboard.Size = UDim2.new(0, 100, 0, 20) -- Tamanho do ESP
-                        Billboard.StudsOffset = Vector3.new(0, 2, 0) -- Ajuste fino da altura em relação à cabeça do jogador
+                        Billboard.AlwaysOnTop = false -- Alterado para false para corrigir o problema do ESP ficar acima dos jogadores
+                        Billboard.Size = UDim2.new(1, 0, 1, 0) -- Tamanho do ESP
+                        Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste fino da altura em relação à cabeça do jogador
                         Billboard.Adornee = head
 
                         local Frame = Instance.new("Frame")
                         Frame.BackgroundTransparency = 0.5
                         Frame.Size = UDim2.new(1, 0, 1, 0)
-                        Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-                        Frame.BorderSizePixel = 0
+                        Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Cor verde para o ESP
+                        Frame.BorderSizePixel = 2 -- Adicionado uma borda ao redor do ESP para torná-lo mais visível
+                        Frame.BorderColor3 = Color3.fromRGB(0, 0, 0) -- Cor da borda preta
                         Frame.Parent = Billboard
 
                         Billboard.Parent = game.CoreGui
@@ -232,6 +233,7 @@ local Button3 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
 
