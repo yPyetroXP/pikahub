@@ -276,13 +276,10 @@ local Button4 = MainTab:CreateButton({
         if _G.aimbotStarted == nil then
             _G.aimbotStarted = true
 
-            local function checkTeam(player)
-                if game.PlaceId == 286090429 then
-                    return true -- Se estivermos em Arsenal, não verificaremos a equipe
-                elseif game.PlaceId == ARSENAL_PLACE_ID then
-                    local myTeam = game.Players.LocalPlayer.Team
-                    local targetTeam = player.Team
-                    return myTeam ~= targetTeam
+            local function isEnemy(player)
+                local myPlayer = game.Players.LocalPlayer
+                if game.PlaceId == ARSENAL_PLACE_ID then
+                    return player.Team ~= myPlayer.Team -- Se estivermos em Arsenal, verificamos a equipe
                 else
                     return true -- Para outros jogos, o Aimbot funcionará independentemente da equipe
                 end
@@ -301,7 +298,7 @@ local Button4 = MainTab:CreateButton({
                     if not myHead then return end
                     local myPosition = myHead.Position
                     for _, player in pairs(players:GetPlayers()) do
-                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") and checkTeam(player) then
+                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") and isEnemy(player) then
                             local head = player.Character.Head
                             local headPosition = head.Position
                             local distance = (headPosition - myPosition).Magnitude
@@ -320,6 +317,7 @@ local Button4 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
 
