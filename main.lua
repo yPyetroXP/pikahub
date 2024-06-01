@@ -426,3 +426,58 @@ function FindNearestTarget()
 end
 
 
+
+
+
+local function PredictMovement(targetPosition, targetVelocity, targetDistance)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    local camera = game.Workspace.CurrentCamera
+    
+    if not humanoidRootPart then
+        return
+    end
+
+    local myPosition = humanoidRootPart.Position
+    local myVelocity = (myPosition - humanoidRootPart.Position)
+    local timeToHit = targetDistance / myVelocity.Magnitude
+    local predictedTargetPosition = targetPosition + targetVelocity * timeToHit
+
+    -- Orientar a câmera para o ponto predito
+    camera.CFrame = CFrame.new(camera.CFrame.Position, predictedTargetPosition)
+end
+
+local function UpdatePrediction()
+    local player = game.Players.LocalPlayer
+    local mouse = player:GetMouse()
+    local camera = game.Workspace.CurrentCamera
+    local target = FindNearestTarget()
+
+    if target then
+        local targetPosition = target.Position
+        local targetVelocity = target.Velocity
+        local targetDistance = (targetPosition - camera.CFrame.Position).Magnitude
+        PredictMovement(targetPosition, targetVelocity, targetDistance)
+    end
+end
+
+local function PredictiveAim()
+    while true do
+        if _G.predictiveAimEnabled then
+            UpdatePrediction()
+        end
+        wait(0.1) -- Ajuste o intervalo conforme necessário para equilibrar a precisão e o desempenho
+    end
+end
+
+local Button9 = CombatTab:CreateButton({
+    Name = "Ativar/Desativar Predição de Movimento",
+    Callback = function()
+        _G.predictiveAimEnabled = not _G.predictiveAimEnabled
+
+        if _G.predictiveAimEnabled then
+            coroutine.wrap(PredictiveAim)()
+        end
+    end,
+})
