@@ -311,5 +311,23 @@ local Button4 = MainTab:CreateButton({
 })
 
 
+local Button5 = MainTab:CreateButton({
+    Name = "Ativar/Desativar Rapid Fire",
+    Callback = function()
+        _G.rapidFireEnabled = not _G.rapidFireEnabled
+
+        if _G.rapidFireEnabled then
+            game:GetService("UserInputService").InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("Humanoid") then
+                        game.Players.LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
+                    end
+                end
+            end)
+        else
+            game:GetService("UserInputService").InputBegan:Disconnect()
+        end
+    end,
+})
 
 
