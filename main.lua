@@ -202,6 +202,18 @@ local Button3 = MainTab:CreateButton({
                 end
             end
 
+            local function toggleESP(enabled)
+                for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
+                    if player ~= game.Players.LocalPlayer and player.Character then
+                        if enabled then
+                            createESP(player)
+                        else
+                            removeESP(player)
+                        end
+                    end
+                end
+            end
+
             game:GetService('Players').PlayerAdded:Connect(function(player)
                 player.CharacterAdded:Connect(function()
                     if _G.espEnabled then
@@ -214,16 +226,13 @@ local Button3 = MainTab:CreateButton({
                 removeESP(player)
             end)
 
-            for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character then
-                    if _G.espEnabled then
-                        createESP(player)
-                    end
-                end
-            end
+            toggleESP(_G.espEnabled)
+        else
+            toggleESP(_G.espEnabled)
         end
     end,
 })
+
 
 
 
