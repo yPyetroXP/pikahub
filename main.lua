@@ -276,14 +276,16 @@ local Button4 = MainTab:CreateButton({
         if _G.aimbotStarted == nil then
             _G.aimbotStarted = true
 
-            local gameId = tostring(game.PlaceId)
-            if gameId == "286090429" then
-                Rayfield:Notify({
-                    Title = "Aimbot Indisponível",
-                    Content = "O aimbot não está disponível neste jogo.",
-                    Duration = 5,
-                })
-                return
+            local function checkTeam(player)
+                if game.PlaceId == 286090429 then
+                    return true -- Se estivermos em Arsenal, não verificaremos a equipe
+                elseif game.PlaceId == ARSENAL_PLACE_ID then
+                    local myTeam = game.Players.LocalPlayer.Team
+                    local targetTeam = player.Team
+                    return myTeam ~= targetTeam
+                else
+                    return true -- Para outros jogos, o Aimbot funcionará independentemente da equipe
+                end
             end
 
             local camera = game.Workspace.CurrentCamera
@@ -299,10 +301,10 @@ local Button4 = MainTab:CreateButton({
                     if not myHead then return end
                     local myPosition = myHead.Position
                     for _, player in pairs(players:GetPlayers()) do
-                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                        if player ~= myPlayer and player.Character and player.Character:FindFirstChild("Head") and checkTeam(player) then
                             local head = player.Character.Head
                             local headPosition = head.Position
-                            local distance = (headPosition - myPosition).magnitude
+                            local distance = (headPosition - myPosition).Magnitude
                             if distance < minDistance then
                                 minDistance = distance
                                 target = head
@@ -318,5 +320,6 @@ local Button4 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
