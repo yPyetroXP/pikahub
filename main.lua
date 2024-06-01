@@ -179,10 +179,13 @@ local Button3 = MainTab:CreateButton({
                         Billboard.Size = UDim2.new(2, 0, 2, 0) -- Tamanho do ESP
                         Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste fino da altura em relação à cabeça do jogador
                         Billboard.Adornee = head
+                        Billboard.AlwaysOnTop = true -- Garante que o ESP esteja sempre visível
+                        Billboard.ExtentsOffset = Vector3.new(0, 0, 0) -- Deslocamento do centro do adorno para a borda da tela
 
                         local Frame = Instance.new("Frame")
                         Frame.Size = UDim2.new(1, 0, 1, 0)
                         Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Cor vermelha para o ESP
+                        Frame.BackgroundTransparency = 0.5 -- Define a transparência do ESP
                         Frame.BorderSizePixel = 2
                         Frame.Parent = Billboard
 
@@ -228,6 +231,7 @@ local Button3 = MainTab:CreateButton({
         end
     end,
 })
+
 
 
 
