@@ -664,3 +664,45 @@ local Button11 = CombatTab:CreateButton({
         end
     end,
 })
+
+
+local function FindNearestPlayer()
+    local nearestPlayer = nil
+    local nearestDistance = math.huge
+
+    local players = game.Players
+
+    for _, player in pairs(players) do
+        if player ~= game.Players.LocalPlayer then
+            local localRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+            local targetRootPart = player.Character.HumanoidRootPart
+
+            local distance = (localRootPart.Position - targetRootPart.Position).Magnitude
+
+            if distance < nearestDistance then
+                nearestPlayer = player
+                nearestDistance = distance
+            end
+        end
+    end
+
+    return nearestPlayer
+end
+
+
+local function FlyToNearestPlayer()
+    local targetPlayer = FindNearestPlayer()
+    if targetPlayer then
+        local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+        local player = game.Players.LocalPlayer
+        player.Character.HumanoidRootPart.CFrame = CFrame.new(player.Character.HumanoidRootPart.Position, targetPosition)
+
+        -- ... (Adicionar efeito visual opcional)
+    end
+end
+
+-- Criar o botão
+local FlyToNearestPlayerButton = MainTab:CreateButton({
+    Name = "Voar para Jogador Próximo",
+    Callback = FlyToNearestPlayer,
+})
