@@ -464,7 +464,7 @@ end
 
 
 
-local function PredictMovement(targetPosition, targetVelocity, targetDistance)
+function PredictMovement(targetPosition, targetVelocity, targetDistance)
     local player = game.Players.LocalPlayer
     local character = player.Character
     local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
@@ -476,11 +476,20 @@ local function PredictMovement(targetPosition, targetVelocity, targetDistance)
 
     local myPosition = humanoidRootPart.Position
     local myVelocity = (myPosition - humanoidRootPart.Position)
+    local gravity = Vector3.new(0, -15, 0) -- Ajuste a gravidade de acordo com o jogo (valor negativo para gravidade para baixo)
+    local targetGravity = targetVelocity.Y * gravity
+
+    -- Calcular o tempo para atingir o alvo horizontalmente
     local timeToHit = targetDistance / myVelocity.Magnitude
-    local predictedTargetPosition = targetPosition + targetVelocity * timeToHit
+
+    -- Prever a posição horizontal do alvo
+    local predictedHorizontalTargetPosition = targetPosition + targetVelocity * timeToHit
+
+    -- Prever a posição vertical do alvo considerando a gravidade
+    local predictedVerticalTargetPosition = predictedHorizontalTargetPosition + targetGravity * 0.5 * timeToHit^2
 
     -- Orientar a câmera para o ponto predito
-    camera.CFrame = CFrame.new(camera.CFrame.Position, predictedTargetPosition)
+    camera.CFrame = CFrame.new(camera.CFrame.Position, predictedVerticalTargetPosition)
 end
 
 local function UpdatePrediction()
