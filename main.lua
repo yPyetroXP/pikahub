@@ -311,11 +311,7 @@ local Button4 = CombatTab:CreateButton({
 
             local function isEnemy(player)
                 local myPlayer = game.Players.LocalPlayer
-                if game.PlaceId == 286090429 then
-                    return player.Team ~= myPlayer.Team -- Se estivermos em Arsenal, verificamos a equipe
-                else
-                    return true -- Para outros jogos, o Aimbot funcionará independentemente da equipe
-                end
+                return player.Team ~= myPlayer.Team -- Independentemente do jogo, verificamos a equipe
             end
 
             local camera = game.Workspace.CurrentCamera
@@ -350,6 +346,7 @@ local Button4 = CombatTab:CreateButton({
         end
     end,
 })
+
 
 
 local Button5 = CombatTab:CreateButton({
