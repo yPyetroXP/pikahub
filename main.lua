@@ -666,27 +666,27 @@ local Button11 = CombatTab:CreateButton({
 })
 
 
-local function FindNearestPlayer()
-    local nearestPlayer = nil
-    local nearestDistance = math.huge
+local function AcharPlayerProximo()
+  local nearestPlayer = nil
+  local nearestDistance = math.huge
 
-    local players = game.Players
+  local players = game.Players:GetPlayers() -- Get all players as a table
 
-    for _, player in pairs(players) do
-        if player ~= game.Players.LocalPlayer then
-            local localRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
-            local targetRootPart = player.Character.HumanoidRootPart
+  for _, player in ipairs(players) do  -- Iterate using ipairs
+    if player ~= game.Players.LocalPlayer then
+      local localRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+      local targetRootPart = player.Character.HumanoidRootPart
 
-            local distance = (localRootPart.Position - targetRootPart.Position).Magnitude
+      local distance = (localRootPart.Position - targetRootPart.Position).Magnitude
 
-            if distance < nearestDistance then
-                nearestPlayer = player
-                nearestDistance = distance
-            end
-        end
+      if distance < nearestDistance then
+        nearestPlayer = player
+        nearestDistance = distance
+      end
     end
+  end
 
-    return nearestPlayer
+  return nearestPlayer
 end
 
 
