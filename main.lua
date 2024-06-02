@@ -339,20 +339,21 @@ local Button5 = CombatTab:CreateButton({
 })
 
 
+-- Função para remover o recuo das armas
 local function NoRecoil()
     local player = game.Players.LocalPlayer
-    local mouse = player:GetMouse()
     local camera = game.Workspace.CurrentCamera
-    
-    mouse.Move:Connect(function()
+
+    camera.Changed:Connect(function()
         if _G.noRecoilEnabled then
-            local recoil = camera:WaitForChild("Recoil")
-            recoil.Value = Vector3.new(0, 0, 0) -- Define o recuo da câmera como zero para evitar o recuo
+            -- Remove o recuo das armas ajustando o CFrame da câmera
+            local recoilCorrection = CFrame.new(0, 0, 0)
+            camera.CFrame = camera.CFrame * recoilCorrection
         end
     end)
 end
 
-local Button6 = CombatTab:CreateButton({
+local Button6 = VisualTab:CreateButton({
     Name = "Ativar/Desativar No Recoil",
     Callback = function()
         _G.noRecoilEnabled = not _G.noRecoilEnabled
