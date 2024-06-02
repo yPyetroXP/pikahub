@@ -29,6 +29,39 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
+
+-- Definindo uma variável para armazenar o estado da interface (aberta ou fechada)
+local interfaceOpen = false
+
+-- Função para alternar a visibilidade da interface
+local function toggleInterface()
+    if interfaceOpen then
+        Window:Hide() -- Esconder a interface
+    else
+        Window:Show() -- Mostrar a interface
+    end
+    interfaceOpen = not interfaceOpen
+end
+
+-- Criando um botão fora da interface principal para abrir a interface
+local screenGui = Instance.new("ScreenGui")
+local openButton = Instance.new("TextButton")
+
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.Name = "OpenInterfaceButtonGui"
+
+openButton.Parent = screenGui
+openButton.Size = UDim2.new(0, 100, 0, 50)
+openButton.Position = UDim2.new(0, 10, 0, 10)
+openButton.BackgroundColor3 = Color3.new(1, 1, 1)
+openButton.TextColor3 = Color3.new(0, 0, 0)
+openButton.Text = "Abrir Interface"
+
+openButton.MouseButton1Click:Connect(function()
+    toggleInterface()
+end)
+
+
 local MainTab = Window:CreateTab("🏠 Início", nil) -- Title, Image
 local MainSection = MainTab:CreateSection("Principal")
 
