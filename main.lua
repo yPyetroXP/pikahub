@@ -705,7 +705,7 @@ local FlyToNearestPlayerButton = MainTab:CreateButton({
 })
 
 
-ocal Button5 = CombatTab:CreateButton({
+local Button14 = CombatTab:CreateButton({
     Name = "Ativar/Desativar BHOP",
     Callback = function()
         _G.bhopEnabled = not _G.bhopEnabled
