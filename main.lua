@@ -703,3 +703,26 @@ local FlyToNearestPlayerButton = MainTab:CreateButton({
     Name = "Voar para Jogador Próximo",
     Callback = FlyToNearestPlayer,
 })
+
+
+ocal Button5 = CombatTab:CreateButton({
+    Name = "Ativar/Desativar BHOP",
+    Callback = function()
+        _G.bhopEnabled = not _G.bhopEnabled
+
+        if _G.bhopStarted == nil then
+            _G.bhopStarted = true
+
+            game:GetService('RunService').RenderStepped:Connect(function()
+                if _G.bhopEnabled then
+                    local myPlayer = game.Players.LocalPlayer
+                    local myCharacter = myPlayer.Character
+                    local humanoid = myCharacter and myCharacter:FindFirstChildOfClass("Humanoid")
+                    if humanoid and humanoid:GetState() == Enum.HumanoidStateType.Running then
+                        humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
+                end
+            end)
+        end
+    end,
+})
