@@ -732,12 +732,35 @@ local FarmSection = FarmTab:CreateSection("Funções de Auto Farm")
 
 local AutoFarmEnabled = false
 
+-- Função para encontrar a missão e aceitar
+local function AcceptQuest(questGiverName)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return
+    end
+
+    local questGiver = game.Workspace:FindFirstChild(questGiverName)
+    if questGiver and questGiver:FindFirstChild("HumanoidRootPart") then
+        humanoidRootPart.CFrame = questGiver.HumanoidRootPart.CFrame
+        wait(1) -- Espera para o teleporte completar
+
+        -- Simular interação com o NPC para aceitar a missão
+        local questRemote = game:GetService("ReplicatedStorage"):FindFirstChild("QuestRemote")
+        if questRemote then
+            questRemote:InvokeServer("AcceptQuest", questGiverName)
+        end
+    end
+end
+
 -- Função para encontrar o NPC inimigo mais próximo
 local function FindNearestEnemy()
     local player = game.Players.LocalPlayer
     local character = player.Character
     local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-    
+
     if not humanoidRootPart then
         return nil
     end
@@ -764,21 +787,27 @@ local function AutoFarm()
         local player = game.Players.LocalPlayer
         local character = player.Character
         local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-        
+
         if humanoidRootPart then
+            -- Aceitar a missão
+            AcceptQuest("QuestGiverName") -- Substitua "QuestGiverName" pelo nome do NPC que dá a missão
+
+            -- Equipar a ferramenta "Combate"
+            local combatTool = player.Backpack:FindFirstChild("Combat")
+            if combatTool then
+                player.Character.Humanoid:EquipTool(combatTool)
+            end
+
             -- Tentar derrotar o inimigo mais próximo
             local nearestEnemy = FindNearestEnemy()
             if nearestEnemy then
                 -- Teleportar para o inimigo
                 humanoidRootPart.CFrame = nearestEnemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5) -- Aproximar-se do inimigo
-                
-                -- Simular ataque (verifique o método de ataque do seu jogo)
-                for _, tool in ipairs(player.Backpack:GetChildren()) do
-                    if tool:IsA("Tool") then
-                        player.Character.Humanoid:EquipTool(tool)
-                        tool:Activate() -- Ativar a ferramenta para atacar
-                        wait(0.1) -- Ajuste conforme necessário para o tempo entre ataques
-                    end
+
+                -- Ativar a ferramenta "Combate" para atacar
+                if combatTool then
+                    combatTool:Activate() -- Ativar a ferramenta para atacar
+                    wait(0.1) -- Ajuste conforme necessário para o tempo entre ataques
                 end
             end
         end
@@ -827,3 +856,4 @@ local AutoFarmButton = FarmTab:CreateButton({
         end
     end,
 })
+
