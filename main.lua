@@ -732,33 +732,7 @@ local FarmSection = FarmTab:CreateSection("Funções de Auto Farm")
 
 local AutoFarmEnabled = false
 
--- Função para encontrar a fruta mais próxima
-local function FindNearestFruit()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
-    
-    if not humanoidRootPart then
-        return nil
-    end
-
-    local nearestFruit = nil
-    local shortestDistance = math.huge
-
-    for _, fruit in ipairs(game.Workspace:GetChildren()) do
-        if fruit:IsA("Tool") and fruit:FindFirstChild("Handle") then
-            local distance = (fruit.Handle.Position - humanoidRootPart.Position).magnitude
-            if distance < shortestDistance then
-                shortestDistance = distance
-                nearestFruit = fruit
-            end
-        end
-    end
-
-    return nearestFruit
-end
-
--- Função para encontrar o inimigo mais próximo
+-- Função para encontrar o NPC inimigo mais próximo
 local function FindNearestEnemy()
     local player = game.Players.LocalPlayer
     local character = player.Character
@@ -792,21 +766,20 @@ local function AutoFarm()
         local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
         
         if humanoidRootPart then
-            -- Tentar pegar a fruta mais próxima
-            local nearestFruit = FindNearestFruit()
-            if nearestFruit then
-                humanoidRootPart.CFrame = nearestFruit.Handle.CFrame
-                wait(1) -- Tempo para coletar a fruta
-                nearestFruit.Parent = player.Backpack
-            end
-
             -- Tentar derrotar o inimigo mais próximo
             local nearestEnemy = FindNearestEnemy()
             if nearestEnemy then
+                -- Teleportar para o inimigo
                 humanoidRootPart.CFrame = nearestEnemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5) -- Aproximar-se do inimigo
-                -- Simular ataque (ajuste conforme necessário para seu jogo)
-                game:GetService("ReplicatedStorage").Events.AttackEvent:FireServer(nearestEnemy)
-                wait(1) -- Tempo entre ataques
+                
+                -- Simular ataque (verifique o método de ataque do seu jogo)
+                for _, tool in ipairs(player.Backpack:GetChildren()) do
+                    if tool:IsA("Tool") then
+                        player.Character.Humanoid:EquipTool(tool)
+                        tool:Activate() -- Ativar a ferramenta para atacar
+                        wait(0.1) -- Ajuste conforme necessário para o tempo entre ataques
+                    end
+                end
             end
         end
 
