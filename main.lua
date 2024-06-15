@@ -851,4 +851,100 @@ local AutoFarmButton = FarmTab:CreateButton({
     end,
 })
 
+local TeleportTab = Window:CreateTab("🌐 Teleporte", nil) -- Title, Image
+local TeleportSection = TeleportTab:CreateSection("Funções de Teleporte")
+
+local TeleportEnabled = false
+
+-- Função para encontrar o inimigo mais próximo
+local function TeleportFindNearestEnemy()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+    if not humanoidRootPart then
+        return nil
+    end
+
+    local nearestEnemy = nil
+    local shortestDistance = math.huge
+
+    for _, otherPlayer in ipairs(game.Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Team ~= player.Team and otherPlayer.Character then
+            local targetCharacter = otherPlayer.Character
+            local targetHumanoidRootPart = targetCharacter:FindFirstChild("HumanoidRootPart")
+            if targetHumanoidRootPart and targetCharacter:FindFirstChildOfClass("Humanoid").Health > 0 then
+                local distance = (targetHumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    nearestEnemy = otherPlayer
+                end
+            end
+        end
+    end
+
+    return nearestEnemy
+end
+
+-- Função de Teleporte para o inimigo mais próximo
+local function TeleportToNearestEnemy()
+    while TeleportEnabled do
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+
+        if humanoidRootPart then
+            local nearestEnemy = TeleportFindNearestEnemy()
+            if nearestEnemy and nearestEnemy.Character then
+                local targetHumanoidRootPart = nearestEnemy.Character:FindFirstChild("HumanoidRootPart")
+                if targetHumanoidRootPart then
+                    humanoidRootPart.CFrame = targetHumanoidRootPart.CFrame * CFrame.new(0, 0, -5) -- Teleportar para perto do inimigo
+                end
+            end
+        end
+
+        wait(0.5) -- Intervalo entre cada loop
+    end
+end
+
+-- Criar o botão para ativar/desativar o Teleporte para o inimigo mais próximo
+local TeleportButton = TeleportTab:CreateButton({
+    Name = "Ativar/Desativar Teleporte para Inimigo",
+    Callback = function()
+        TeleportEnabled = not TeleportEnabled
+
+        if TeleportEnabled then
+            coroutine.wrap(TeleportToNearestEnemy)()
+            Rayfield:Notify({
+                Title = "Teleporte",
+                Content = "Teleporte para o inimigo mais próximo ativado!",
+                Duration = 5,
+                Image = nil,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Ok!",
+                        Callback = function()
+                            print("Usuário reconheceu a notificação.")
+                        end
+                    },
+                },
+            })
+        else
+            Rayfield:Notify({
+                Title = "Teleporte",
+                Content = "Teleporte para o inimigo mais próximo desativado!",
+                Duration = 5,
+                Image = nil,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Ok!",
+                        Callback = function()
+                            print("Usuário reconheceu a notificação.")
+                        end
+                    },
+                },
+            })
+        end
+    end,
+})
 
