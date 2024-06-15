@@ -726,3 +726,131 @@ local Button14 = CombatTab:CreateButton({
         end
     end,
 })
+
+local FarmTab = Window:CreateTab("🌾 Auto Farm", nil) -- Title, Image
+local FarmSection = FarmTab:CreateSection("Funções de Auto Farm")
+
+local AutoFarmEnabled = false
+
+-- Função para encontrar a fruta mais próxima
+local function FindNearestFruit()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        return nil
+    end
+
+    local nearestFruit = nil
+    local shortestDistance = math.huge
+
+    for _, fruit in ipairs(game.Workspace:GetChildren()) do
+        if fruit:IsA("Tool") and fruit:FindFirstChild("Handle") then
+            local distance = (fruit.Handle.Position - humanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestFruit = fruit
+            end
+        end
+    end
+
+    return nearestFruit
+end
+
+-- Função para encontrar o inimigo mais próximo
+local function FindNearestEnemy()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoidRootPart then
+        return nil
+    end
+
+    local nearestEnemy = nil
+    local shortestDistance = math.huge
+
+    for _, enemy in ipairs(game.Workspace.Enemies:GetChildren()) do
+        if enemy:FindFirstChild("HumanoidRootPart") and enemy.Humanoid.Health > 0 then
+            local distance = (enemy.HumanoidRootPart.Position - humanoidRootPart.Position).magnitude
+            if distance < shortestDistance then
+                shortestDistance = distance
+                nearestEnemy = enemy
+            end
+        end
+    end
+
+    return nearestEnemy
+end
+
+-- Função de Auto Farm
+local function AutoFarm()
+    while AutoFarmEnabled do
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
+        
+        if humanoidRootPart then
+            -- Tentar pegar a fruta mais próxima
+            local nearestFruit = FindNearestFruit()
+            if nearestFruit then
+                humanoidRootPart.CFrame = nearestFruit.Handle.CFrame
+                wait(1) -- Tempo para coletar a fruta
+                nearestFruit.Parent = player.Backpack
+            end
+
+            -- Tentar derrotar o inimigo mais próximo
+            local nearestEnemy = FindNearestEnemy()
+            if nearestEnemy then
+                humanoidRootPart.CFrame = nearestEnemy.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5) -- Aproximar-se do inimigo
+                -- Simular ataque (ajuste conforme necessário para seu jogo)
+                game:GetService("ReplicatedStorage").Events.AttackEvent:FireServer(nearestEnemy)
+                wait(1) -- Tempo entre ataques
+            end
+        end
+
+        wait(0.5) -- Intervalo entre cada loop
+    end
+end
+
+-- Criar o botão para ativar/desativar o Auto Farm
+local AutoFarmButton = FarmTab:CreateButton({
+    Name = "Ativar/Desativar Auto Farm",
+    Callback = function()
+        AutoFarmEnabled = not AutoFarmEnabled
+
+        if AutoFarmEnabled then
+            coroutine.wrap(AutoFarm)()
+            Rayfield:Notify({
+                Title = "Auto Farm",
+                Content = "Auto Farm ativado!",
+                Duration = 5,
+                Image = nil,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Ok!",
+                        Callback = function()
+                            print("Usuário reconheceu a notificação.")
+                        end
+                    },
+                },
+            })
+        else
+            Rayfield:Notify({
+                Title = "Auto Farm",
+                Content = "Auto Farm desativado!",
+                Duration = 5,
+                Image = nil,
+                Actions = { -- Notification Buttons
+                    Ignore = {
+                        Name = "Ok!",
+                        Callback = function()
+                            print("Usuário reconheceu a notificação.")
+                        end
+                    },
+                },
+            })
+        end
+    end,
+})
