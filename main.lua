@@ -208,39 +208,47 @@ local Button3 = VisualTab:CreateButton({
             _G.espStarted = true
 
             local function createESP(player)
-                if player.Character then
-                    local head = player.Character:FindFirstChild("Head")
+                local function updateESP(character)
+                    local head = character:FindFirstChild("Head")
                     if head then
                         local Billboard = Instance.new("BillboardGui")
                         Billboard.Name = "ESP"
-                        Billboard.Size = UDim2.new(2, 0, 2, 0) -- Tamanho do ESP
+                        Billboard.Size = UDim2.new(4, 0, 4, 0) -- Tamanho do ESP
                         Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste fino da altura em relação à cabeça do jogador
                         Billboard.Adornee = head
                         Billboard.AlwaysOnTop = true -- Garante que o ESP esteja sempre visível
-                        Billboard.ExtentsOffset = Vector3.new(0, 0, 0) -- Deslocamento do centro do adorno para a borda da tela
 
                         local Frame = Instance.new("Frame")
                         Frame.Size = UDim2.new(1, 0, 1, 0)
-                        Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Cor vermelha para o ESP
+                        Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Cor verde para o ESP
                         Frame.BackgroundTransparency = 0.5 -- Define a transparência do ESP
-                        Frame.BorderSizePixel = 2
+                        Frame.BorderSizePixel = 0
                         Frame.Parent = Billboard
 
                         Billboard.Parent = game.CoreGui
                     end
                 end
+
+                if player.Character then
+                    updateESP(player.Character)
+                    player.CharacterAdded:Connect(updateESP)
+                else
+                    player.CharacterAdded:Connect(updateESP)
+                end
             end
 
             local function removeESP(player)
-                local billboard = player:FindFirstChild("ESP")
-                if billboard then
-                    billboard:Destroy()
+                if player.Character then
+                    local billboard = player.Character:FindFirstChild("ESP")
+                    if billboard then
+                        billboard:Destroy()
+                    end
                 end
             end
 
             local function toggleESP(enabled)
                 for _, player in ipairs(game:GetService('Players'):GetPlayers()) do
-                    if player ~= game.Players.LocalPlayer and player.Character then
+                    if player ~= game.Players.LocalPlayer then
                         if enabled then
                             createESP(player)
                         else
@@ -251,7 +259,7 @@ local Button3 = VisualTab:CreateButton({
             end
 
             game:GetService('Players').PlayerAdded:Connect(function(player)
-                player.CharacterAdded:Connect(function()
+                player.CharacterAdded:Connect(function(character)
                     if _G.espEnabled then
                         createESP(player)
                     end
