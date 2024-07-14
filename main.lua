@@ -214,14 +214,14 @@ local Button3 = VisualTab:CreateButton({
                         local Billboard = Instance.new("BillboardGui")
                         Billboard.Name = "ESP"
                         Billboard.Size = UDim2.new(4, 0, 4, 0) -- Tamanho do ESP
-                        Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste fino da altura em relação à cabeça do jogador
+                        Billboard.StudsOffset = Vector3.new(0, 3, 0) -- Ajuste da altura
                         Billboard.Adornee = head
-                        Billboard.AlwaysOnTop = true -- Garante que o ESP esteja sempre visível
+                        Billboard.AlwaysOnTop = true -- ESP sempre visível
 
                         local Frame = Instance.new("Frame")
                         Frame.Size = UDim2.new(1, 0, 1, 0)
-                        Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Cor verde para o ESP
-                        Frame.BackgroundTransparency = 0.5 -- Define a transparência do ESP
+                        Frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Cor verde
+                        Frame.BackgroundTransparency = 0.5 -- Transparência
                         Frame.BorderSizePixel = 0
                         Frame.Parent = Billboard
 
@@ -270,12 +270,23 @@ local Button3 = VisualTab:CreateButton({
                 removeESP(player)
             end)
 
+            local function reloadESP()
+                while _G.espEnabled do
+                    toggleESP(false)
+                    toggleESP(true)
+                    wait(10)
+                end
+            end
+
             toggleESP(_G.espEnabled)
+
+            spawn(reloadESP) -- Inicia a recarga automática do ESP
         else
             toggleESP(_G.espEnabled)
         end
     end,
 })
+
 
 
 
